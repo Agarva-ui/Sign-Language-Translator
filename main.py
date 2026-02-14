@@ -20,12 +20,12 @@ hands = mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.5, ma
 labels = {i: chr(65 + i) for i in range(26)} # Quick way to map 0-25 to A-Z
 
 # --- Logic Variables ---
-prediction_history = [] # To store recent predictions for stability
-buffer_size = 20        # Number of frames to check for stability
-current_word = ""       # The word currently being typed
-final_sentence = ""     # The full sentence
-last_added_char = ""    # To prevent repeating the same letter immediately
-last_hand_time = time.time() # To detect "no hand" for spaces
+prediction_history = []
+buffer_size = 20
+current_word = ""       
+final_sentence = "" 
+last_added_char = ""
+last_hand_time = time.time()
 
 while True:
     data_aux = []
@@ -65,7 +65,6 @@ while True:
                 char = labels[predicted_index]
                 prediction_history.append(char)
 
-        # --- Stability Logic ---
         if len(prediction_history) > buffer_size:
             prediction_history.pop(0) # Keep buffer at fixed size
             
@@ -82,7 +81,6 @@ while True:
                     last_added_char = stable_char
     
     else:
-        # --- Space Logic (If no hand detected for 2 seconds) ---
         if time.time() - last_hand_time > 2.0 and current_word != "":
             final_sentence += current_word + " "
             current_word = ""
@@ -99,7 +97,7 @@ while True:
     key = cv2.waitKey(1)
     if key == ord('q'):
         break
-    elif key == ord('c'): # Manual clear
+    elif key == ord('c'):
         current_word = ""
         final_sentence = ""
 
